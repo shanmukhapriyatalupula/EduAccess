@@ -213,8 +213,46 @@ const ContentLibrary = ({ region, regionData }: ContentLibraryProps) => {
   });
 
   const handlePurchase = (item: ContentItem) => {
-    // Simulate payment processing
-    alert(`Initiating payment for "${item.title}" - $${item.price.toFixed(2)}\n\nPayment methods available:\n• Net Banking\n• PhonePe\n• UPI\n• Credit/Debit Card`);
+    if (item.price === 0) {
+      // Handle free downloads
+      alert(`Starting download for "${item.title}"`);
+      return;
+    }
+
+    // Create PhonePe deep link
+    const amount = (item.price * 100).toString(); // PhonePe expects amount in paise
+    const merchantId = 'EDUACCESS'; // You'll need to replace with your actual merchant ID
+    const transactionId = `TXN_${Date.now()}_${item.id}`;
+    
+    // PhonePe deep link format
+    const phonePeUrl = `phonepe://pay?pa=eduaccess@ybl&pn=EduAccess&am=${amount}&tr=${transactionId}&tn=Payment for ${encodeURIComponent(item.title)}`;
+    
+    // Fallback URL for web
+    const webFallbackUrl = `https://phon.pe/ru_${transactionId}`;
+    
+    console.log(`Processing payment for "${item.title}" - ₹${item.price}`);
+    
+    // Try to open PhonePe app
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const isAndroid = /android/i.test(userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    
+    if (isAndroid || isIOS) {
+      // On mobile, try to open the PhonePe app
+      window.location.href = phonePeUrl;
+      
+      // Fallback after a short delay if app doesn't open
+      setTimeout(() => {
+        if (confirm('PhonePe app not found. Would you like to use web payment instead?')) {
+          window.open(webFallbackUrl, '_blank');
+        }
+      }, 2000);
+    } else {
+      // On desktop, show payment options
+      if (confirm(`Pay ₹${item.price} for "${item.title}"?\n\nPayment methods available:\n• PhonePe\n• Net Banking\n• UPI\n• Credit/Debit Card`)) {
+        window.open(webFallbackUrl, '_blank');
+      }
+    }
   };
 
   const categories = ['all', ...Array.from(new Set(contentItems.map(item => item.category)))];
@@ -325,7 +363,7 @@ const ContentLibrary = ({ region, regionData }: ContentLibraryProps) => {
                 
                 <div className="flex items-center justify-between">
                   <div className="text-lg font-bold text-gray-900">
-                    {item.price === 0 ? 'FREE' : `$${item.price.toFixed(2)}`}
+                    {item.price === 0 ? 'FREE' : `₹${item.price.toFixed(2)}`}
                   </div>
                   <Button 
                     onClick={() => handlePurchase(item)}
@@ -340,7 +378,7 @@ const ContentLibrary = ({ region, regionData }: ContentLibraryProps) => {
                     ) : (
                       <>
                         <CreditCard className="h-4 w-4" />
-                        Purchase
+                        Pay with PhonePe
                       </>
                     )}
                   </Button>
