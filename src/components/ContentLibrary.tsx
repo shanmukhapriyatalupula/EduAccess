@@ -219,38 +219,42 @@ const ContentLibrary = ({ region, regionData }: ContentLibraryProps) => {
       return;
     }
 
-    // Create PhonePe deep link
-    const amount = (item.price * 100).toString(); // PhonePe expects amount in paise
-    const merchantId = 'EDUACCESS'; // You'll need to replace with your actual merchant ID
+    // Create PhonePe payment request
+    const amount = item.price.toFixed(2);
     const transactionId = `TXN_${Date.now()}_${item.id}`;
     
-    // PhonePe deep link format
-    const phonePeUrl = `phonepe://pay?pa=eduaccess@ybl&pn=EduAccess&am=${amount}&tr=${transactionId}&tn=Payment for ${encodeURIComponent(item.title)}`;
+    // PhonePe deep link format (UPI intent)
+    const upiUrl = `upi://pay?pa=eduaccess@paytm&pn=EduAccess&am=${amount}&cu=INR&tr=${transactionId}&tn=${encodeURIComponent('Payment for ' + item.title)}`;
     
-    // Fallback URL for web
-    const webFallbackUrl = `https://phon.pe/ru_${transactionId}`;
+    // PhonePe web URL format
+    const webPaymentUrl = `https://mercury.phonepe.com/transact?amount=${amount * 100}&merchantId=EDUACCESS&transactionId=${transactionId}&redirectUrl=${encodeURIComponent(window.location.href)}`;
     
     console.log(`Processing payment for "${item.title}" - ₹${item.price}`);
     
-    // Try to open PhonePe app
+    // Try to open UPI app first
     const userAgent = navigator.userAgent || navigator.vendor;
     const isAndroid = /android/i.test(userAgent);
     const isIOS = /iPad|iPhone|iPod/.test(userAgent);
     
-    if (isAndroid || isIOS) {
-      // On mobile, try to open the PhonePe app
-      window.location.href = phonePeUrl;
+    if (isAndroid) {
+      // On Android, try UPI intent first
+      window.location.href = upiUrl;
       
-      // Fallback after a short delay if app doesn't open
+      // Fallback to web payment after delay
       setTimeout(() => {
-        if (confirm('PhonePe app not found. Would you like to use web payment instead?')) {
-          window.open(webFallbackUrl, '_blank');
+        if (confirm('UPI app not found. Would you like to continue with web payment?')) {
+          window.open(webPaymentUrl, '_blank');
         }
-      }, 2000);
+      }, 3000);
+    } else if (isIOS) {
+      // On iOS, show payment options
+      if (confirm(`Pay ₹${item.price} for "${item.title}"?\n\nThis will open PhonePe payment page.`)) {
+        window.open(webPaymentUrl, '_blank');
+      }
     } else {
-      // On desktop, show payment options
+      // On desktop, use web payment
       if (confirm(`Pay ₹${item.price} for "${item.title}"?\n\nPayment methods available:\n• PhonePe\n• Net Banking\n• UPI\n• Credit/Debit Card`)) {
-        window.open(webFallbackUrl, '_blank');
+        window.open(webPaymentUrl, '_blank');
       }
     }
   };
