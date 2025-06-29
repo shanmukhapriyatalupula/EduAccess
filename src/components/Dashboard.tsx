@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,13 @@ interface DashboardProps {
 }
 
 const Dashboard = ({ user, onLogout }: DashboardProps) => {
+  const [currentLocation, setCurrentLocation] = useState(user.country);
+
+  const handleLocationUpdate = (newLocation: string) => {
+    setCurrentLocation(newLocation);
+    console.log('Location updated to:', newLocation);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
       {/* Enhanced Header */}
@@ -50,7 +57,7 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
                       </p>
                       <div className="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-400">
                         <Globe className="w-3 h-3" />
-                        <span>{user.country}</span>
+                        <span>{currentLocation}</span>
                       </div>
                     </div>
                   </div>
@@ -112,13 +119,13 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="w-5 h-5 text-blue-500" />
-                Your Location
+                Location Settings
               </CardTitle>
             </CardHeader>
             <CardContent>
               <LocationDetector 
-                onLocationDetected={(location) => console.log('Location detected:', location)}
-                currentLocation={user.country}
+                onLocationDetected={handleLocationUpdate}
+                currentLocation={currentLocation}
               />
             </CardContent>
           </Card>
