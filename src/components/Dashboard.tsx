@@ -116,7 +116,10 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <LocationDetector />
+              <LocationDetector 
+                onLocationDetected={(location) => console.log('Location detected:', location)}
+                currentLocation={user.country}
+              />
             </CardContent>
           </Card>
         </div>

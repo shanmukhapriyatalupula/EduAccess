@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -180,6 +181,97 @@ const ContentLibrary = () => {
 
     return filtered;
   }, [content, searchTerm, selectedCategory]);
+
+  const handleAddContent = () => {
+    const newItem: ContentItem = {
+      id: content.length + 1,
+      ...newContent,
+    };
+    setContent([...content, newItem]);
+    setNewContent({
+      type: 'course',
+      title: '',
+      description: '',
+      duration: '',
+      enrolled: 0,
+      rating: 0,
+      progress: 0,
+      price: 0,
+    });
+    setShowAddForm(false);
+  };
+
+  const handleDownloadFree = (item: ContentItem) => {
+    console.log(`Downloading free content: "${item.title}"`);
+    
+    // Create a downloadable content file
+    const contentText = `
+${item.title}
+===============================
+
+Description: ${item.description}
+Duration: ${item.duration}
+Type: ${item.type.toUpperCase()}
+Rating: ${item.rating}/5 (${item.enrolled} enrolled)
+
+Thank you for choosing EduAccess Platform!
+Enjoy your free learning content.
+
+--
+This content is provided free of charge by EduAccess Platform.
+Visit us at eduaccess.com for more learning resources.
+    `;
+
+    // Create a blob and download it
+    const blob = new Blob([contentText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    // Show success message
+    alert(`"${item.title}" has been downloaded successfully! Check your downloads folder.`);
+  };
+
+  const handlePurchase = (item: ContentItem) => {
+    if (item.price === 0) {
+      handleDownloadFree(item);
+      return;
+    }
+
+    // Create PhonePe payment request
+    const amount = item.price.toFixed(2);
+    const transactionId = `TXN_${Date.now()}_${item.id}`;
+    
+    // Corrected UPI URL format
+    const upiUrl = `upi://pay?pa=eduaccess@paytm&pn=EduAccess&am=${amount}&cu=INR&tr=${transactionId}&tn=${encodeURIComponent('Payment for ' + item.title)}`;
+    
+    console.log(`Processing payment for "${item.title}" - ₹${item.price}`);
+    
+    // Try to open UPI app first
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const isAndroid = /android/i.test(userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    
+    if (isAndroid || isIOS) {
+      // On mobile, try UPI intent first
+      window.location.href = upiUrl;
+      
+      // Fallback message after delay
+      setTimeout(() => {
+        alert('If PhonePe app did not open, please install PhonePe from your app store.');
+      }, 3000);
+    } else {
+      // On desktop, show payment info
+      if (confirm(`Pay ₹${item.price} for "${item.title}"?\n\nPlease scan the QR code with PhonePe app or use UPI ID: eduaccess@paytm`)) {
+        alert('Please use PhonePe mobile app to complete the payment.');
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
@@ -366,7 +458,7 @@ const ContentLibrary = () => {
                               className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white border-0 transition-all duration-300 hover:scale-105 group"
                             >
                               <Download className="w-4 h-4 mr-2 group-hover:animate-bounce" />
-                              Access Free
+                              Download Free
                             </Button>
                           ) : (
                             <Button 
@@ -449,72 +541,6 @@ const ContentLibrary = () => {
       </div>
     </div>
   );
-
-  const handleAddContent = () => {
-    const newItem: ContentItem = {
-      id: content.length + 1,
-      ...newContent,
-    };
-    setContent([...content, newItem]);
-    setNewContent({
-      type: 'course',
-      title: '',
-      description: '',
-      duration: '',
-      enrolled: 0,
-      rating: 0,
-      progress: 0,
-      price: 0,
-    });
-    setShowAddForm(false);
-  };
-};
-
-const handlePurchase = (item: ContentItem) => {
-  if (item.price === 0) {
-    console.log(`Accessing free content: "${item.title}"`);
-    alert(`You now have access to "${item.title}"!`);
-    return;
-  }
-
-  // Create PhonePe payment request
-  const amount = item.price.toFixed(2);
-  const transactionId = `TXN_${Date.now()}_${item.id}`;
-  
-  // PhonePe deep link format (UPI intent)
-  const upiUrl = `upi://pay?pa=eduaccess@paytm&pn=EduAccess&am=${amount}&cu=INR&tr=${transactionId}&tn=${encodeURIComponent('Payment for ' + item.title)}`;
-  
-  // PhonePe web URL format
-  const webPaymentUrl = `https://mercury.phonepe.com/transact?amount=${Math.round(item.price * 100)}&merchantId=EDUACCESS&transactionId=${transactionId}&redirectUrl=${encodeURIComponent(window.location.href)}`;
-  
-  console.log(`Processing payment for "${item.title}" - ₹${item.price}`);
-  
-  // Try to open UPI app first
-  const userAgent = navigator.userAgent || navigator.vendor;
-  const isAndroid = /android/i.test(userAgent);
-  const isIOS = /iPad|iPhone|iPod/.test(userAgent);
-  
-  if (isAndroid) {
-    // On Android, try UPI intent first
-    window.location.href = upiUrl;
-    
-    // Fallback to web payment after delay
-    setTimeout(() => {
-      if (confirm('UPI app not found. Would you like to continue with web payment?')) {
-        window.open(webPaymentUrl, '_blank');
-      }
-    }, 3000);
-  } else if (isIOS) {
-    // On iOS, show payment options
-    if (confirm(`Pay ₹${item.price} for "${item.title}"?\n\nThis will open PhonePe payment page.`)) {
-      window.open(webPaymentUrl, '_blank');
-    }
-  } else {
-    // On desktop, use web payment
-    if (confirm(`Pay ₹${item.price} for "${item.title}"?\n\nPayment methods available:\n• PhonePe\n• Net Banking\n• UPI\n• Credit/Debit Card`)) {
-      window.open(webPaymentUrl, '_blank');
-    }
-  }
 };
 
 export default ContentLibrary;
