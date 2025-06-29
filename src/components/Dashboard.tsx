@@ -1,12 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Download, MapPin, Users, Globe, FileText, Video, Headphones, CreditCard } from 'lucide-react';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import ContentLibrary from './ContentLibrary';
 import LocationDetector from './LocationDetector';
+import { LogOut, Globe, User, BookOpen, TrendingUp, Award, Star } from 'lucide-react';
 
 interface DashboardProps {
   user: {
@@ -18,255 +17,112 @@ interface DashboardProps {
 }
 
 const Dashboard = ({ user, onLogout }: DashboardProps) => {
-  const [detectedLocation, setDetectedLocation] = useState<string>('');
-  const [regionData, setRegionData] = useState<any>(null);
-
-  useEffect(() => {
-    // Auto-detect location on component mount
-    detectUserLocation();
-  }, []);
-
-  const detectUserLocation = async () => {
-    try {
-      // Simulate location detection
-      const mockLocation = 'India'; // In real implementation, use geolocation API
-      setDetectedLocation(mockLocation);
-      
-      // Set region-specific data based on detected or user-provided location
-      const location = mockLocation || user.country;
-      setRegionData(getRegionData(location));
-    } catch (error) {
-      console.error('Location detection failed:', error);
-      setDetectedLocation(user.country);
-      setRegionData(getRegionData(user.country));
-    }
-  };
-
-  const getRegionData = (location: string) => {
-    const regionMappings: { [key: string]: any } = {
-      'China': {
-        challenges: ['Great Firewall blocks Google, YouTube, WhatsApp, Wikipedia, many news/media sites'],
-        content: ['PDF tutorials on VPN use', 'Downloadable Wikipedia dumps', 'Offline coding courses', 'English learning materials'],
-        priority: 'high'
-      },
-      'North Korea': {
-        challenges: ['No open internet', 'State-controlled intranet only'],
-        content: ['Basic education PDFs (math, science, English)', 'Offline videos for farming', 'Health education materials'],
-        priority: 'critical'
-      },
-      'Cuba': {
-        challenges: ['Limited, expensive internet', 'State controls information flow'],
-        content: ['PDFs on entrepreneurship', 'Language learning', 'Mental health resources', 'Offline skill videos'],
-        priority: 'high'
-      },
-      'Syria': {
-        challenges: ['Government censorship', 'Infrastructure instability'],
-        content: ['Basic tech tutorials', 'Human rights education', 'Online privacy guides'],
-        priority: 'high'
-      },
-      'Sudan': {
-        challenges: ['Censorship', 'Periodic blackouts'],
-        content: ['Digital security PDFs', 'Women\'s education', 'Career skills', 'Self-learning videos'],
-        priority: 'high'
-      },
-      'India': {
-        challenges: ['Low internet access in rural areas', 'Limited bandwidth'],
-        content: ['Offline educational books', 'Skill development videos', 'Language learning PDFs', 'Tech tutorials'],
-        priority: 'medium'
-      },
-      'Iran': {
-        challenges: ['Website restrictions', 'Limited access to global platforms'],
-        content: ['VPN connection guides', 'Detailed video tutorials', 'Privacy tools', 'Educational materials'],
-        priority: 'high'
-      }
-    };
-
-    return regionMappings[location] || {
-      challenges: ['Limited internet access', 'Educational resource scarcity'],
-      content: ['General educational materials', 'Basic skill development', 'Language learning'],
-      priority: 'medium'
-    };
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-blue-100 text-blue-800';
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-600 rounded-lg">
-                <BookOpen className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
+      {/* Enhanced Header */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-lg">
+        <div className="px-6 py-4 mx-auto max-w-7xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg animate-pulse-glow">
+                <BookOpen className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">EduAccess Dashboard</h1>
-                <p className="text-sm text-gray-600">Welcome back, {user.name}!</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  EduAccess Platform
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Your Gateway to Knowledge
+                </p>
               </div>
             </div>
+            
             <div className="flex items-center space-x-4">
-              <LocationDetector 
-                onLocationDetected={setDetectedLocation}
-                currentLocation={detectedLocation}
-              />
-              <Button variant="outline" onClick={onLogout}>
+              <Card className="glass-effect border-0 shadow-lg">
+                <CardContent className="p-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-gray-800 dark:text-white">
+                        {user.name}
+                      </p>
+                      <div className="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-400">
+                        <Globe className="w-3 h-3" />
+                        <span>{user.country}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Button
+                onClick={onLogout}
+                variant="outline"
+                className="hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all duration-300 hover:scale-105"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Location Status */}
+      {/* Enhanced Welcome Section */}
+      <div className="px-6 py-8 mx-auto max-w-7xl">
         <div className="mb-8">
-          <Card className="border-l-4 border-l-blue-600">
+          <Card className="glass-effect border-0 shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-1">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
+                <div className="flex flex-col md:flex-row items-center justify-between">
+                  <div className="mb-4 md:mb-0">
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                      Welcome back, {user.name}! 👋
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Continue your learning journey with personalized content
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-3">
+                    <Badge variant="secondary" className="glass-effect px-4 py-2 hover:scale-105 transition-all">
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      Learning Streak: 5 days
+                    </Badge>
+                    <Badge variant="secondary" className="glass-effect px-4 py-2 hover:scale-105 transition-all">
+                      <Award className="w-4 h-4 mr-2" />
+                      Certificates: 3
+                    </Badge>
+                    <Badge variant="secondary" className="glass-effect px-4 py-2 hover:scale-105 transition-all">
+                      <Star className="w-4 h-4 mr-2" />
+                      Progress: 67%
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Location Detector with enhanced styling */}
+        <div className="mb-8">
+          <Card className="glass-effect border-0 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-blue-600" />
-                Your Location: {detectedLocation || 'Detecting...'}
+                <Globe className="w-5 h-5 text-blue-500" />
+                Your Location
               </CardTitle>
-              {regionData && (
-                <CardDescription>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge className={getPriorityColor(regionData.priority)}>
-                      {regionData.priority.toUpperCase()} PRIORITY
-                    </Badge>
-                    <span className="text-sm text-gray-600">
-                      Region-specific content available
-                    </span>
-                  </div>
-                </CardDescription>
-              )}
             </CardHeader>
-            {regionData && (
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Access Challenges:</h4>
-                    <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                      {regionData.challenges.map((challenge: string, index: number) => (
-                        <li key={index}>{challenge}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Available Content:</h4>
-                    <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                      {regionData.content.map((item: string, index: number) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            )}
-          </Card>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <FileText className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">247</div>
-              <p className="text-sm text-gray-600">PDF Documents</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <Video className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">89</div>
-              <p className="text-sm text-gray-600">Video Courses</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <Headphones className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">156</div>
-              <p className="text-sm text-gray-600">Audio Materials</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <Users className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">12.5K</div>
-              <p className="text-sm text-gray-600">Active Learners</p>
+            <CardContent>
+              <LocationDetector />
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Content */}
-        <Tabs defaultValue="content" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="content">Content Library</TabsTrigger>
-            <TabsTrigger value="downloads">My Downloads</TabsTrigger>
-            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="content">
-            <ContentLibrary region={detectedLocation} regionData={regionData} />
-          </TabsContent>
-          
-          <TabsContent value="downloads">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Download className="h-5 w-5" />
-                  Your Downloaded Content
-                </CardTitle>
-                <CardDescription>
-                  Access your offline learning materials
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-gray-500">
-                  <Download className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No downloads yet. Start exploring the content library!</p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="recommendations">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5" />
-                  Personalized Recommendations
-                </CardTitle>
-                <CardDescription>
-                  Content curated for your region and interests
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {regionData && (
-                  <div className="space-y-4">
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h4 className="font-semibold text-blue-900 mb-2">Priority for your region:</h4>
-                      <div className="grid gap-2">
-                        {regionData.content.slice(0, 3).map((item: string, index: number) => (
-                          <div key={index} className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">Recommended</Badge>
-                            <span className="text-sm">{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        {/* Content Library */}
+        <ContentLibrary />
       </div>
     </div>
   );
