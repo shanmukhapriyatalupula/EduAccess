@@ -22,7 +22,8 @@ import {
   Filter,
   TrendingUp,
   Award,
-  Zap
+  Zap,
+  MapPin
 } from 'lucide-react';
 
 interface ContentItem {
@@ -36,124 +37,364 @@ interface ContentItem {
   progress: number;
   price: number;
   imageUrl?: string;
+  regions?: string[];
 }
 
-const contentData: ContentItem[] = [
-  {
-    id: 1,
-    type: 'course',
-    title: 'The Ultimate React Course',
-    description: 'Learn React from scratch and build amazing projects.',
-    duration: '4 hours',
-    enrolled: 1200,
-    rating: 4.9,
-    progress: 75,
-    price: 499,
-    imageUrl: '/images/react-course.jpg',
-  },
-  {
-    id: 2,
-    type: 'video',
-    title: 'Introduction to JavaScript ES6',
-    description: 'A quick guide to the new features in JavaScript ES6.',
-    duration: '30 minutes',
-    enrolled: 3400,
-    rating: 4.7,
-    progress: 0,
-    price: 0,
-    imageUrl: '/images/js-es6.jpg',
-  },
-  {
-    id: 3,
-    type: 'article',
-    title: 'CSS Flexbox Guide',
-    description: 'Master CSS Flexbox with this comprehensive guide.',
-    duration: '15 minutes',
-    enrolled: 5600,
-    rating: 4.6,
-    progress: 0,
-    price: 0,
-    imageUrl: '/images/css-flexbox.jpg',
-  },
-  {
-    id: 4,
-    type: 'course',
-    title: 'Node.js for Beginners',
-    description: 'Get started with Node.js and build server-side applications.',
-    duration: '3 hours',
-    enrolled: 800,
-    rating: 4.8,
-    progress: 60,
-    price: 399,
-    imageUrl: '/images/node-js.jpg',
-  },
-  {
-    id: 5,
-    type: 'video',
-    title: 'Vue.js Crash Course',
-    description: 'Learn Vue.js in this fast-paced crash course.',
-    duration: '45 minutes',
-    enrolled: 2100,
-    rating: 4.5,
-    progress: 0,
-    price: 0,
-    imageUrl: '/images/vue-js.jpg',
-  },
-  {
-    id: 6,
-    type: 'article',
-    title: 'HTML5 Semantic Elements',
-    description: 'Learn about the new semantic elements in HTML5.',
-    duration: '20 minutes',
-    enrolled: 4200,
-    rating: 4.4,
-    progress: 0,
-    price: 0,
-    imageUrl: '/images/html5.jpg',
-  },
-  {
-    id: 7,
-    type: 'course',
-    title: 'Python for Data Science',
-    description: 'Learn Python and use it for data analysis and machine learning.',
-    duration: '5 hours',
-    enrolled: 1500,
-    rating: 4.9,
-    progress: 80,
-    price: 599,
-    imageUrl: '/images/python-data.jpg',
-  },
-  {
-    id: 8,
-    type: 'video',
-    title: 'Angular Tutorial for Beginners',
-    description: 'A step-by-step guide to learning Angular.',
-    duration: '60 minutes',
-    enrolled: 2800,
-    rating: 4.6,
-    progress: 0,
-    price: 0,
-    imageUrl: '/images/angular.jpg',
-  },
-  {
-    id: 9,
-    type: 'article',
-    title: 'Responsive Web Design',
-    description: 'Create responsive websites that look great on any device.',
-    duration: '25 minutes',
-    enrolled: 4900,
-    rating: 4.7,
-    progress: 0,
-    price: 0,
-    imageUrl: '/images/responsive-design.jpg',
-  },
-];
+// Location-specific course data
+const getLocationSpecificCourses = (location: string): ContentItem[] => {
+  const baseCourses: ContentItem[] = [
+    {
+      id: 1,
+      type: 'course',
+      title: 'The Ultimate React Course',
+      description: 'Learn React from scratch and build amazing projects.',
+      duration: '4 hours',
+      enrolled: 1200,
+      rating: 4.9,
+      progress: 75,
+      price: 499,
+    },
+    {
+      id: 2,
+      type: 'video',
+      title: 'Introduction to JavaScript ES6',
+      description: 'A quick guide to the new features in JavaScript ES6.',
+      duration: '30 minutes',
+      enrolled: 3400,
+      rating: 4.7,
+      progress: 0,
+      price: 0,
+    }
+  ];
 
-const ContentLibrary = () => {
+  // Location-specific courses
+  const locationCourses: { [key: string]: ContentItem[] } = {
+    'Iran': [
+      {
+        id: 101,
+        type: 'course',
+        title: 'VPN Setup & Safe Web Browsing',
+        description: 'Learn how to safely access the web using VPN services and protect your privacy online.',
+        duration: '2 hours',
+        enrolled: 8500,
+        rating: 4.9,
+        progress: 0,
+        price: 0,
+        regions: ['Iran']
+      },
+      {
+        id: 102,
+        type: 'video',
+        title: 'Tor Browser Complete Guide',
+        description: 'Master anonymous browsing with Tor browser for enhanced privacy and security.',
+        duration: '45 minutes',
+        enrolled: 6200,
+        rating: 4.8,
+        progress: 0,
+        price: 0,
+        regions: ['Iran']
+      },
+      {
+        id: 103,
+        type: 'article',
+        title: 'Digital Privacy Fundamentals',
+        description: 'Essential knowledge about digital privacy, encryption, and secure communications.',
+        duration: '25 minutes',
+        enrolled: 4800,
+        rating: 4.7,
+        progress: 0,
+        price: 0,
+        regions: ['Iran']
+      },
+      {
+        id: 104,
+        type: 'course',
+        title: 'Secure Messaging Applications',
+        description: 'Learn to use encrypted messaging apps like Signal, Telegram, and ProtonMail safely.',
+        duration: '1.5 hours',
+        enrolled: 3900,
+        rating: 4.6,
+        progress: 0,
+        price: 299,
+        regions: ['Iran']
+      },
+      {
+        id: 105,
+        type: 'video',
+        title: 'Bypassing Internet Restrictions',
+        description: 'Legal methods to access restricted content while maintaining your digital security.',
+        duration: '35 minutes',
+        enrolled: 7100,
+        rating: 4.8,
+        progress: 0,
+        price: 0,
+        regions: ['Iran']
+      }
+    ],
+    'China': [
+      {
+        id: 201,
+        type: 'course',
+        title: 'VPN Solutions for China',
+        description: 'Comprehensive guide to VPN services that work reliably in China.',
+        duration: '2.5 hours',
+        enrolled: 12000,
+        rating: 4.9,
+        progress: 0,
+        price: 399,
+        regions: ['China']
+      },
+      {
+        id: 202,
+        type: 'video',
+        title: 'WeChat Development Basics',
+        description: 'Learn to develop WeChat mini-programs and integrate with WeChat ecosystem.',
+        duration: '50 minutes',
+        enrolled: 8900,
+        rating: 4.7,
+        progress: 0,
+        price: 0,
+        regions: ['China']
+      },
+      {
+        id: 203,
+        type: 'article',
+        title: 'Baidu SEO Optimization',
+        description: 'Master search engine optimization specifically for Baidu search engine.',
+        duration: '30 minutes',
+        enrolled: 5600,
+        rating: 4.6,
+        progress: 0,
+        price: 0,
+        regions: ['China']
+      },
+      {
+        id: 204,
+        type: 'course',
+        title: 'Shadowsocks Configuration',
+        description: 'Advanced proxy setup using Shadowsocks for secure internet access.',
+        duration: '1.5 hours',
+        enrolled: 6700,
+        rating: 4.8,
+        progress: 0,
+        price: 0,
+        regions: ['China']
+      },
+      {
+        id: 205,
+        type: 'video',
+        title: 'Alipay Integration Tutorial',
+        description: 'Complete guide to integrating Alipay payment system in your applications.',
+        duration: '40 minutes',
+        enrolled: 4300,
+        rating: 4.5,
+        progress: 0,
+        price: 299,
+        regions: ['China']
+      }
+    ],
+    'North Korea': [
+      {
+        id: 301,
+        type: 'course',
+        title: 'Offline Programming Environment',
+        description: 'Set up complete programming environments that work without internet access.',
+        duration: '3 hours',
+        enrolled: 2100,
+        rating: 4.9,
+        progress: 0,
+        price: 0,
+        regions: ['North Korea']
+      },
+      {
+        id: 302,
+        type: 'video',
+        title: 'Satellite Internet Setup',
+        description: 'Learn about satellite internet options and setup for remote locations.',
+        duration: '55 minutes',
+        enrolled: 1800,
+        rating: 4.8,
+        progress: 0,
+        price: 0,
+        regions: ['North Korea']
+      },
+      {
+        id: 303,
+        type: 'article',
+        title: 'Ham Radio Programming',
+        description: 'Programming and communication using amateur radio frequencies.',
+        duration: '35 minutes',
+        enrolled: 1500,
+        rating: 4.7,
+        progress: 0,
+        price: 0,
+        regions: ['North Korea']
+      },
+      {
+        id: 304,
+        type: 'course',
+        title: 'Mesh Network Creation',
+        description: 'Build local mesh networks for communication without internet infrastructure.',
+        duration: '2.5 hours',
+        enrolled: 1200,
+        rating: 4.9,
+        progress: 0,
+        price: 499,
+        regions: ['North Korea']
+      },
+      {
+        id: 305,
+        type: 'video',
+        title: 'Portable Server Setup',
+        description: 'Create portable servers for local network services and applications.',
+        duration: '45 minutes',
+        enrolled: 900,
+        rating: 4.6,
+        progress: 0,
+        price: 0,
+        regions: ['North Korea']
+      }
+    ],
+    'Cuba': [
+      {
+        id: 401,
+        type: 'course',
+        title: 'El Paquete Content Creation',
+        description: 'Learn to create and distribute content through Cuba\'s offline internet system.',
+        duration: '2 hours',
+        enrolled: 3200,
+        rating: 4.8,
+        progress: 0,
+        price: 0,
+        regions: ['Cuba']
+      },
+      {
+        id: 402,
+        type: 'video',
+        title: 'WiFi Hotspot Optimization',
+        description: 'Maximize your Cuban WiFi experience with connection optimization techniques.',
+        duration: '35 minutes',
+        enrolled: 4100,
+        rating: 4.7,
+        progress: 0,
+        price: 0,
+        regions: ['Cuba']
+      },
+      {
+        id: 403,
+        type: 'article',
+        title: 'Sneakernet File Sharing',
+        description: 'Efficient methods for sharing files and data in limited connectivity environments.',
+        duration: '20 minutes',
+        enrolled: 2800,
+        rating: 4.6,
+        progress: 0,
+        price: 0,
+        regions: ['Cuba']
+      },
+      {
+        id: 404,
+        type: 'course',
+        title: 'Offline Web Development',
+        description: 'Build web applications that work perfectly without internet connectivity.',
+        duration: '3.5 hours',
+        enrolled: 2600,
+        rating: 4.9,
+        progress: 0,
+        price: 399,
+        regions: ['Cuba']
+      },
+      {
+        id: 405,
+        type: 'video',
+        title: 'SNET Navigation Guide',
+        description: 'Complete guide to navigating Cuba\'s street network (SNET) gaming network.',
+        duration: '40 minutes',
+        enrolled: 3500,
+        rating: 4.8,
+        progress: 0,
+        price: 0,
+        regions: ['Cuba']
+      }
+    ],
+    'Syria': [
+      {
+        id: 501,
+        type: 'course',
+        title: 'Secure Communication Methods',
+        description: 'Learn various secure communication techniques for challenging environments.',
+        duration: '2.5 hours',
+        enrolled: 4200,
+        rating: 4.9,
+        progress: 0,
+        price: 0,
+        regions: ['Syria']
+      },
+      {
+        id: 502,
+        type: 'video',
+        title: 'Power-Efficient Computing',
+        description: 'Optimize your devices for maximum efficiency during power outages.',
+        duration: '45 minutes',
+        enrolled: 3800,
+        rating: 4.7,
+        progress: 0,
+        price: 0,
+        regions: ['Syria']
+      },
+      {
+        id: 503,
+        type: 'article',
+        title: 'Mobile Data Conservation',
+        description: 'Techniques to make the most of limited mobile data allowances.',
+        duration: '25 minutes',
+        enrolled: 5100,
+        rating: 4.8,
+        progress: 0,
+        price: 0,
+        regions: ['Syria']
+      },
+      {
+        id: 504,
+        type: 'course',
+        title: 'Alternative Internet Access',
+        description: 'Explore various methods to access internet in restricted environments.',
+        duration: '2 hours',
+        enrolled: 3600,
+        rating: 4.8,
+        progress: 0,
+        price: 299,
+        regions: ['Syria']
+      },
+      {
+        id: 505,
+        type: 'video',
+        title: 'Encrypted File Storage',
+        description: 'Secure your important files with encryption techniques and safe storage methods.',
+        duration: '50 minutes',
+        enrolled: 4500,
+        rating: 4.9,
+        progress: 0,
+        price: 0,
+        regions: ['Syria']
+      }
+    ]
+  };
+
+  // Get location-specific courses or return base courses
+  const specificCourses = locationCourses[location] || [];
+  return [...baseCourses, ...specificCourses];
+};
+
+interface ContentLibraryProps {
+  currentLocation?: string;
+}
+
+const ContentLibrary = ({ currentLocation = 'Global' }: ContentLibraryProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [content, setContent] = useState(contentData);
+  const [content, setContent] = useState(() => getLocationSpecificCourses(currentLocation));
   const [newContent, setNewContent] = useState<Omit<ContentItem, 'id'>>({
     type: 'course',
     title: '',
@@ -164,6 +405,11 @@ const ContentLibrary = () => {
     progress: 0,
     price: 0,
   });
+
+  // Update content when location changes
+  React.useEffect(() => {
+    setContent(getLocationSpecificCourses(currentLocation));
+  }, [currentLocation]);
 
   const filteredContent = useMemo(() => {
     let filtered = content;
@@ -213,6 +459,7 @@ Description: ${item.description}
 Duration: ${item.duration}
 Type: ${item.type.toUpperCase()}
 Rating: ${item.rating}/5 (${item.enrolled} enrolled)
+${item.regions ? `Regions: ${item.regions.join(', ')}` : ''}
 
 Thank you for choosing EduAccess Platform!
 Enjoy your free learning content.
@@ -243,61 +490,113 @@ Visit us at eduaccess.com for more learning resources.
       return;
     }
 
-    // Create PhonePe payment request
-    const amount = item.price.toFixed(2);
-    const transactionId = `TXN_${Date.now()}_${item.id}`;
+    // Enhanced PhonePe payment integration
+    const amount = item.price;
+    const transactionId = `EDU_${Date.now()}_${item.id}`;
+    const merchantId = 'EDUACCESS';
     
-    // Corrected UPI URL format
-    const upiUrl = `upi://pay?pa=eduaccess@paytm&pn=EduAccess&am=${amount}&cu=INR&tr=${transactionId}&tn=${encodeURIComponent('Payment for ' + item.title)}`;
+    console.log(`Processing PhonePe payment for "${item.title}" - ₹${amount}`);
     
-    console.log(`Processing payment for "${item.title}" - ₹${item.price}`);
+    // Improved UPI URL with proper formatting
+    const upiParams = new URLSearchParams({
+      pa: 'eduaccess@ybl',  // Changed to YBL for better compatibility
+      pn: 'EduAccess Platform',
+      am: amount.toString(),
+      cu: 'INR',
+      tr: transactionId,
+      tn: `Payment for ${item.title}`,
+      mode: '02',
+      purpose: '00'
+    });
     
-    // Try to open UPI app first
-    const userAgent = navigator.userAgent || navigator.vendor;
-    const isAndroid = /android/i.test(userAgent);
-    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    const upiUrl = `upi://pay?${upiParams.toString()}`;
     
-    if (isAndroid || isIOS) {
-      // On mobile, try UPI intent first
-      window.location.href = upiUrl;
+    // Better device detection
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    
+    if (isMobile) {
+      // Try to open UPI app
+      const paymentWindow = window.open(upiUrl, '_self');
       
-      // Fallback message after delay
+      // Fallback after 3 seconds
       setTimeout(() => {
-        alert('If PhonePe app did not open, please install PhonePe from your app store.');
-      }, 3000);
+        // Check if the app opened successfully
+        if (paymentWindow) {
+          // Create a payment confirmation interface
+          const confirmPayment = confirm(
+            `Payment of ₹${amount} for "${item.title}" initiated.\n\n` +
+            `Transaction ID: ${transactionId}\n` +
+            `UPI ID: eduaccess@ybl\n\n` +
+            `Please complete the payment in your UPI app.\n` +
+            `Click OK after payment completion.`
+          );
+          
+          if (confirmPayment) {
+            alert('Thank you! Your access will be activated shortly. Please check your email for course details.');
+          }
+        } else {
+          alert('Please install a UPI app (PhonePe, GPay, Paytm) to complete the payment.');
+        }
+      }, 2000);
     } else {
-      // On desktop, show payment info
-      if (confirm(`Pay ₹${item.price} for "${item.title}"?\n\nPlease scan the QR code with PhonePe app or use UPI ID: eduaccess@paytm`)) {
-        alert('Please use PhonePe mobile app to complete the payment.');
-      }
+      // Desktop fallback with better UX
+      const paymentModal = document.createElement('div');
+      paymentModal.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+          <div style="background: white; padding: 30px; border-radius: 15px; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <h3 style="color: #333; margin-bottom: 20px; font-size: 24px;">Complete Payment</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+              <p style="margin: 5px 0; color: #666;"><strong>Amount:</strong> ₹${amount}</p>
+              <p style="margin: 5px 0; color: #666;"><strong>Course:</strong> ${item.title}</p>
+              <p style="margin: 5px 0; color: #666;"><strong>UPI ID:</strong> eduaccess@ybl</p>
+              <p style="margin: 5px 0; color: #666;"><strong>Transaction ID:</strong> ${transactionId}</p>
+            </div>
+            <p style="color: #666; margin-bottom: 20px;">Scan the QR code with any UPI app or use the UPI ID above</p>
+            <div style="margin: 20px 0;">
+              <div style="width: 150px; height: 150px; background: #f0f0f0; margin: 0 auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #666;">
+                QR Code<br/>Coming Soon
+              </div>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(paymentModal);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
-      {/* Hero Section */}
+      {/* Hero Section with Location Info */}
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 animate-gradient">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative px-6 py-16 mx-auto max-w-7xl">
           <div className="text-center">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <MapPin className="w-6 h-6 text-white" />
+              <Badge variant="secondary" className="glass-effect text-white border-white/30 px-4 py-2 text-lg">
+                {currentLocation}
+              </Badge>
+            </div>
             <h1 className="text-5xl font-bold text-white mb-4 animate-float">
               🌟 Digital Learning Hub
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Discover premium courses, tutorials, and resources to accelerate your learning journey
+              Discover location-specific courses and resources tailored for your region
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               <Badge variant="secondary" className="glass-effect text-white border-white/30 px-4 py-2">
                 <TrendingUp className="w-4 h-4 mr-2" />
-                Trending Content
+                Region-Specific Content
               </Badge>
               <Badge variant="secondary" className="glass-effect text-white border-white/30 px-4 py-2">
                 <Award className="w-4 h-4 mr-2" />
-                Certificate Programs
+                Localized Learning
               </Badge>
               <Badge variant="secondary" className="glass-effect text-white border-white/30 px-4 py-2">
                 <Zap className="w-4 h-4 mr-2" />
-                Interactive Learning
+                Access Solutions
               </Badge>
             </div>
           </div>
@@ -380,8 +679,15 @@ Visit us at eduaccess.com for more learning resources.
                           {item.type}
                         </Badge>
                       </div>
-                      {item.price > 0 && (
+                      {item.regions && (
                         <div className="absolute top-4 left-4">
+                          <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 animate-pulse-glow">
+                            Region Specific
+                          </Badge>
+                        </div>
+                      )}
+                      {item.price > 0 && (
+                        <div className="absolute bottom-4 left-4">
                           <Badge className="bg-gradient-to-r from-green-500 to-blue-500 text-white border-0 animate-pulse-glow">
                             Premium
                           </Badge>
@@ -465,7 +771,7 @@ Visit us at eduaccess.com for more learning resources.
                               onClick={() => handlePurchase(item)}
                               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 transition-all duration-300 hover:scale-105 animate-pulse-glow"
                             >
-                              Pay with PhonePe
+                              Pay with UPI
                             </Button>
                           )}
                         </div>

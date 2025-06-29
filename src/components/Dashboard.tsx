@@ -131,8 +131,8 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
           </Card>
         </div>
 
-        {/* Content Library */}
-        <ContentLibrary />
+        {/* Content Library with current location */}
+        <ContentLibrary currentLocation={currentLocation} />
       </div>
     </div>
   );
